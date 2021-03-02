@@ -2,6 +2,8 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.*;
 
@@ -21,17 +23,61 @@ public class SimpleCardGameTests {
 	}  
 	
 	@Test
+	public void testShuffle() throws InvalidDeckException {
+		
+		Map<String,Map<Integer,Integer>> count = new HashMap<>();
+		
+		int iter = 2000000;
+		
+		for(int i=0;i<iter;i++) {
+			
+			Deck simpleDeck = Factory.createDeck("SimpleDeck");
+		
+			simpleDeck.shuffle();
+			
+			for(int j=0;j<52;j++) {
+				
+				Card c = simpleDeck.cards.get(j);
+				String str = c.toString();
+				
+				if(!count.containsKey(str)) {
+					count.put(str,new HashMap<>());
+				}
+				
+				Map<Integer,Integer> map = count.get(str);
+				
+				map.put(j, map.getOrDefault(j, 0)+1);
+				
+			}
+			
+		}
+		
+		for(Map<Integer,Integer> map: count.values()) {
+			
+			for(int i=0;i<52;i++) {
+				if(map.get(i)!=null) {
+					double prob = (map.get(i)+0.0)/iter;
+					assertTrue( prob>=(1.0/54) && prob <=(1.0/50) );
+				}
+			}
+			
+		}
+		
+		
+	}
+	
+	@Test
 	public void testSizeAndRank() throws InvalidDeckException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {
 		
-		Deck testDeck = Factory.createDeck("SimpleDeck");
+		Deck simpleDeck = Factory.createDeck("SimpleDeck");
 		
 		boolean ordered = true;
 		
-		assertEquals(52,testDeck.cards.size());
+		assertEquals(52,simpleDeck.cards.size());
 		
-		for(int i=1;i<testDeck.cards.size();i++) {
+		for(int i=1;i<simpleDeck.cards.size();i++) {
 			
-			if(testDeck.cards.get(i).getRank().ordinal()<testDeck.cards.get(i-1).getRank().ordinal()) {
+			if(simpleDeck.cards.get(i).getRank().ordinal()<simpleDeck.cards.get(i-1).getRank().ordinal()) {
 				
 				ordered = false;
 				
