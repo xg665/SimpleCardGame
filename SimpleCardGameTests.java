@@ -7,12 +7,22 @@ import java.util.Map;
 
 import org.junit.*;
 
+
+/**
+ *  This class uses the JUnit testing framework
+ *  Players can be used throughout the testing process
+ *  Other instances are customized by the factory 
+ */
 public class SimpleCardGameTests {
 
 	static Player p1;
 	
 	static Player p2;
 	
+	/**
+	   *  Create two players used by some of
+	   *  the testing methods
+	   */
 	@BeforeClass  
     public static void setUp() throws InvalidDeckException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {  
 
@@ -22,11 +32,16 @@ public class SimpleCardGameTests {
         
 	}  
 	
+	/**
+	   * Basic implementation of testing each card having
+	   * approximately 1/52 probability of being positioned
+	   * in any of the 52 positions.
+	   */
 	@Test
 	public void testShuffle() throws InvalidDeckException {
 		
-		Map<String,Map<Integer,Integer>> count = new HashMap<>();
-		
+		Map<String,Map<Integer,Integer>> count = new HashMap<>(); //Count: key is String rep of a Card
+																  //value is a map that maps from position to count
 		int iter = 2000000;
 		
 		for(int i=0;i<iter;i++) {
@@ -35,7 +50,7 @@ public class SimpleCardGameTests {
 		
 			simpleDeck.shuffle();
 			
-			for(int j=0;j<52;j++) {
+			for(int j=0;j<52;j++) {					//Count how many times a card positioned in jth slot
 				
 				Card c = simpleDeck.cards.get(j);
 				String str = c.toString();
@@ -55,9 +70,9 @@ public class SimpleCardGameTests {
 		for(Map<Integer,Integer> map: count.values()) {
 			
 			for(int i=0;i<52;i++) {
-				if(map.get(i)!=null) {
-					double prob = (map.get(i)+0.0)/iter;
-					assertTrue( prob>=(1.0/54) && prob <=(1.0/50) );
+				if(map.get(i)!=null) {								//calculate prob of each card
+					double prob = (map.get(i)+0.0)/iter;			//appearing in ith position
+					assertTrue( prob>=(1.0/54) && prob <=(1.0/50) );//target should be 1/52
 				}
 			}
 			
@@ -66,6 +81,10 @@ public class SimpleCardGameTests {
 		
 	}
 	
+	/**
+	   *  Test size of a simple deck after populate()
+	   *  and the order the cards is correct
+	   */
 	@Test
 	public void testSizeAndRank() throws InvalidDeckException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {
 		
@@ -79,7 +98,7 @@ public class SimpleCardGameTests {
 			
 			if(simpleDeck.cards.get(i).getRank().ordinal()<simpleDeck.cards.get(i-1).getRank().ordinal()) {
 				
-				ordered = false;
+				ordered = false;			//rank of current card cannot be smaller than the previous
 				
 			}
 			
@@ -89,7 +108,11 @@ public class SimpleCardGameTests {
         
 		
 	}
-
+	
+	/**
+	   *  Test whether two hands with same ranks can
+	   *  be tied
+	   */
 	@Test
 	public void testGameTie() throws NullPointerException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InvalidHandException, InvalidDeckException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {
 		
@@ -105,6 +128,10 @@ public class SimpleCardGameTests {
 		
 	}
 	
+	/**
+	   *  Test whether the hands with the second highest rank can
+	   *  win
+	   */
 	@Test
 	public void testGameP1Win() throws NullPointerException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InvalidHandException, InvalidDeckException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {
 		
@@ -120,6 +147,10 @@ public class SimpleCardGameTests {
 		
 	}
 	
+	/**
+	   *  Test whether the hands with the second highest rank can
+	   *  win
+	   */
 	@Test
 	public void testGameP2Win() throws NullPointerException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InvalidHandException, InvalidDeckException, NoSuchMethodException, SecurityException, ClassNotFoundException, NoSuchFieldException {
 		
